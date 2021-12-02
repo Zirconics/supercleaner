@@ -1,4 +1,5 @@
 import KeyListener from './KeyListener.js';
+import UserData from './UserData.js';
 
 export default class Game {
   // Necessary canvas attributes
@@ -15,6 +16,9 @@ export default class Game {
   // Player
   private player: any; // TODO switch to correct type
 
+  // UserData
+  private user: UserData;
+
   // Amount of frames until the next item
   private countUntilNextItem: number;
 
@@ -25,6 +29,7 @@ export default class Game {
    * should be rendered upon
    */
   public constructor(canvas: HTMLCanvasElement) {
+    this.user = new UserData();
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d');
 
@@ -81,7 +86,7 @@ export default class Game {
 
     // Show score
     // TODO: fix actual score system
-    this.writeTextToCanvas('Score: 0', 36, 120, 50);
+    this.writeTextToCanvas(`Score: ${this.user.getScore()}`, 36, 120, 50);
 
     // Create new items if necessary
     if (this.countUntilNextItem === 0) {
@@ -171,7 +176,7 @@ export default class Game {
         && this.player.yPos < element.yPos + element.img.height
         && this.player.yPos + this.player.img.height > element.yPos
       ) {
-        // Do not include this item.
+        this.user.addScore(1);
         return false;
       }
       return true;

@@ -1,12 +1,15 @@
 import KeyListener from './KeyListener.js';
+import UserData from './UserData.js';
 export default class Game {
     canvas;
     ctx;
     keyboard;
     garbageItems;
     player;
+    user;
     countUntilNextItem;
     constructor(canvas) {
+        this.user = new UserData();
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
@@ -37,7 +40,7 @@ export default class Game {
         if (this.keyboard.isKeyDown(KeyListener.KEY_SPACE)) {
             this.cleanUpGarbage();
         }
-        this.writeTextToCanvas('Score: 0', 36, 120, 50);
+        this.writeTextToCanvas(`Score: ${this.user.getScore()}`, 36, 120, 50);
         if (this.countUntilNextItem === 0) {
             const choice = Game.randomNumber(0, 10);
             if (choice < 5) {
@@ -82,6 +85,7 @@ export default class Game {
                 && this.player.xPos + this.player.img.width > element.xPos
                 && this.player.yPos < element.yPos + element.img.height
                 && this.player.yPos + this.player.img.height > element.yPos) {
+                this.user.addScore(1);
                 return false;
             }
             return true;
