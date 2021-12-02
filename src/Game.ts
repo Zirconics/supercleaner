@@ -1,4 +1,5 @@
-import KeyListener from './KeyListener.js';
+import Garbage from './Garbage.js';
+import Player from './Player.js';
 import UserData from './UserData.js';
 
 export default class Game {
@@ -7,14 +8,11 @@ export default class Game {
 
   private readonly ctx: CanvasRenderingContext2D;
 
-  // KeyboardListener so the player can move
-  private keyboard: KeyListener;
-
   // Garbage items (the player needs to pick these up)
-  private garbageItems: any[]; // TODO switch to correct type
+  private garbageItems: Garbage[];
 
   // Player
-  private player: any; // TODO switch to correct type
+  private player: Player;
 
   // UserData
   private user: UserData;
@@ -36,27 +34,15 @@ export default class Game {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
-    this.keyboard = new KeyListener();
-
     this.garbageItems = [];
 
     // Create garbage items
     for (let i = 0; i < Game.randomNumber(3, 10); i++) {
-      this.garbageItems.push({
-        img: Game.loadNewImage('./assets/img/icecream.png'),
-        xPos: Game.randomNumber(0, this.canvas.width - 32),
-        yPos: Game.randomNumber(0, this.canvas.height - 32),
-      });
+      this.garbageItems.push(new Garbage(this.canvas.width, this.canvas.height));
     }
 
     // Create player
-    this.player = {
-      img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
-      xPos: Game.randomNumber(0, this.canvas.width - 76),
-      xVel: 3,
-      yPos: Game.randomNumber(0, this.canvas.height - 92),
-      yVel: 3,
-    };
+    this.player = new Player(canvas.width, canvas.height);
 
     // Take about 5 seconds on a decent computer to show next item
     this.countUntilNextItem = 300;
@@ -74,13 +60,13 @@ export default class Game {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Move the player
-    this.movePlayer();
+    this.player.move(this.canvas);
 
     // Draw everything
     this.draw();
 
     // Player cleans up garbage
-    if (this.keyboard.isKeyDown(KeyListener.KEY_SPACE)) {
+    if (this.player.isCleaning()) {
       this.cleanUpGarbage();
     }
 
@@ -93,11 +79,7 @@ export default class Game {
       const choice = Game.randomNumber(0, 10);
 
       if (choice < 5) {
-        this.garbageItems.push({
-          img: Game.loadNewImage('./assets/img/icecream.png'),
-          xPos: Game.randomNumber(0, this.canvas.width - 32),
-          yPos: Game.randomNumber(0, this.canvas.height - 32),
-        });
+        this.garbageItems.push(new Garbage(this.canvas.width, this.canvas.height));
       }
 
       // Reset the timer with a count between 2 and 4 seconds on a
@@ -117,47 +99,9 @@ export default class Game {
    */
   private draw() {
     this.garbageItems.forEach((element) => {
-      this.ctx.drawImage(element.img, element.xPos, element.yPos);
+      element.draw(this.ctx);
     });
-    this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
-  }
-
-  /**
-   * Moves the player depending on which arrow key is pressed. Player is bound
-   * to the canvas and cannot move outside of it
-   */
-  private movePlayer() {
-    // Moving right
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
-      && this.player.xPos + this.player.img.width < this.canvas.width
-    ) {
-      this.player.xPos += this.player.xVel;
-    }
-
-    // Moving left
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
-      && this.player.xPos > 0
-    ) {
-      this.player.xPos -= this.player.xVel;
-    }
-
-    // Moving up
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_UP)
-      && this.player.yPos > 0
-    ) {
-      this.player.yPos -= this.player.yVel;
-    }
-
-    // Moving down
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
-      && this.player.yPos + this.player.img.height < this.canvas.height
-    ) {
-      this.player.yPos += this.player.yVel;
-    }
+    this.player.draw(this.ctx);
   }
 
   /**
@@ -170,12 +114,7 @@ export default class Game {
     // (filter the clicked garbage item out of the array garbage items)
     this.garbageItems = this.garbageItems.filter((element) => {
       // check if the player is over (collided with) the garbage item.
-      if (
-        this.player.xPos < element.xPos + element.img.width
-        && this.player.xPos + this.player.img.width > element.xPos
-        && this.player.yPos < element.yPos + element.img.height
-        && this.player.yPos + this.player.img.height > element.yPos
-      ) {
+      if (this.player.collidesWith(element)) {
         this.user.addScore(1);
         return false;
       }
@@ -213,7 +152,7 @@ export default class Game {
    * @param source the source
    * @returns HTMLImageElement - returns an image
    */
-  private static loadNewImage(source: string): HTMLImageElement {
+  public static loadNewImage(source: string): HTMLImageElement {
     const img = new Image();
     img.src = source;
     return img;
@@ -226,7 +165,7 @@ export default class Game {
    * @param max - upper boundary
    * @returns a random number between min and max
    */
-  private static randomNumber(min: number, max: number): number {
+  public static randomNumber(min: number, max: number): number {
     return Math.round(Math.random() * (max - min) + min);
   }
 }
