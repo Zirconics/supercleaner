@@ -55,6 +55,7 @@ export default class Game {
    * Game cycle, basically loop that keeps the game running. It contains all
    * the logic needed to draw the individual frames.
    */
+  // TODO Transfer to gameLoop.
   private loop = () => {
     // Clear the screen
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -71,7 +72,7 @@ export default class Game {
     }
 
     // Show score
-    // TODO: fix actual score system
+    // TODO fix actual score system
     this.writeTextToCanvas(`Score: ${this.user.getScore()}`, 36, 120, 50);
 
     // Create new items if necessary
