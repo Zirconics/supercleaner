@@ -6,61 +6,63 @@ export default class UserData {
   private level: number;
 
   /**
-   * Constructor of UserData.
+   * Initialize UserData
+   *
+   * @param name name of the player
    */
-  public constructor() {
-    this.name = 'Bob';
-    this.score = 0;
+  public constructor(name: string) {
+    this.name = name;
     this.level = 1;
+    this.score = 0;
   }
 
   /**
-   * Getter for the name of UserData.
+   * Get name of the plyer
    *
-   * @returns The name of the user.
+   * @returns name of the player
    */
   public getName(): string {
     return this.name;
   }
 
   /**
-   * Method updates the name to a new name.
+   * Set name of the player
    *
-   * @param name New value of name.
+   * @param name - set of the player
    */
-  public setName(name: string) {
+  public setName(name: string): void {
     this.name = name;
   }
 
   /**
-   * Getter for the score of UserData.
+   * Get score of the player
    *
-   * @returns The score of the user.
+   * @returns score of the player
    */
   public getScore(): number {
     return this.score;
   }
 
   /**
-   * Method that adds new points to the current score.
+   * Set score of the player
    *
-   * @param points Score value.
+   * @param points - set score of the player
    */
-  public addScore(points: number): void {
+  public setScore(points: number): void {
     this.score += points;
   }
 
   /**
-   * Getter for the level of UserData.
+   * Get level of the player
    *
-   * @returns The level of the game.
+   * @returns level of the player
    */
   public getLevel(): number {
     return this.level;
   }
 
   /**
-   * Method that increases the level by 1 point.
+   * Increase the level of the player
    */
   public increaseLevel(): void {
     this.level += 1;

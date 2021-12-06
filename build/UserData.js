@@ -2,10 +2,10 @@ export default class UserData {
     name;
     score;
     level;
-    constructor() {
-        this.name = 'Bob';
-        this.score = 0;
+    constructor(name) {
+        this.name = name;
         this.level = 1;
+        this.score = 0;
     }
     getName() {
         return this.name;
@@ -16,7 +16,7 @@ export default class UserData {
     getScore() {
         return this.score;
     }
-    addScore(points) {
+    setScore(points) {
         this.score += points;
     }
     getLevel() {

@@ -8,7 +8,7 @@ export default class GameItem {
         this.xPos = Game.randomNumber(0, maxX);
         this.yPos = Game.randomNumber(0, maxY);
     }
-    getImageHeigt() {
+    getImageHeight() {
         return this.img.height;
     }
     getImageWidth() {
